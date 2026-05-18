@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Buku Tamu Digital KPU Provinsi Riau</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --kpu-cream: #FDF9F1;        
+            --gold-soft: #F9F295;
+            --gold-medium: #D4AF37;
+            --gold-deep: #B8860B;
+            --gold-metallic: linear-gradient(145deg, #B8860B 0%, #F9F295 45%, #D4AF37 50%, #B8860B 100%);
+            --kpu-gold: #D4AF37; 
+            --kpu-maroon: #7A121A;
+            --kpu-maroon-dark: #3A050A;  
+            --white: #ffffff;
+            --font-main: 'Poppins', sans-serif;
+        }
+
+        /* Penstabil Layout */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: var(--font-main);
+            color: var(--kpu-cream); 
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-x: hidden;
+            background-color: var(--kpu-maroon-dark); 
+            background-image: linear-gradient(135deg, rgba(122, 18, 26, 0.80) 0%, rgba(58, 5, 10, 0.88) 100%), url('background-kpu.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+
+        /* Header dibuat static/absolute agar tidak membebani render saat scroll di HP */
+        .header {
+            position: absolute; top: 0; left: 0; width: 100%;
+            display: flex; align-items: center; justify-content: flex-start;
+            gap: 15px; padding: 12px 35px;
+            background: rgba(58, 5, 10, 0.95);
+            backdrop-filter: blur(12px);
+            z-index: 1000;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.3);
+        }
+        .header img { width: 42px; height: 42px; }
+        .header h2 { font-size: 1.1rem; font-weight: 700; color: var(--white); border-left: 2px solid var(--kpu-gold); padding-left: 15px; line-height: 1.2; }
+        .header h2 span { font-weight: 400; font-size: 0.75rem; background: var(--gold-metallic); -webkit-background-clip: text; -webkit-text-fill-color: transparent; display: block; }
+
+        .footer { 
+            width: 100%;
+            padding: 5px 5px; background: rgba(58, 5, 10, 0.95);
+            backdrop-filter: blur(12px); font-size: 0.8rem; text-align: center;
+            border-top: 1px solid rgba(212, 175, 55, 0.3);
+            margin-top: auto; /* Memastikan footer selalu di bawah*/
+        }
+
+        .btn-back {
+            position: fixed; top: 85px; left: 20px; width: 45px; height: 45px;
+            background: rgba(255, 255, 255, 0.1); border: 1px solid var(--kpu-gold);
+            border-radius: 50%; display: none; align-items: center; justify-content: center;
+            color: var(--kpu-gold); font-size: 1.1rem; cursor: pointer; z-index: 100; backdrop-filter: blur(10px);
+        }
+
+        .container {
+            width: 100%; max-width: 1000px; 
+            padding: 120px 20px 40px 20px;
+            display: flex; flex-direction: column; align-items: center; text-align: center; z-index: 1;
+            flex: 1;
+        }
+
+        .main-content { display: flex; flex-direction: column; align-items: center; animation: fadeIn 0.8s ease-out; width: 100%; }
+
+        .icon-circle {
+            width: 130px; height: 130px; background: rgba(255,255,255,0.05); border-radius: 50%;
+            display: flex; align-items: center; justify-content: center; margin-bottom: 25px;
+            border: 2px solid var(--kpu-gold); box-shadow: 0 0 20px rgba(212, 175, 55, 0.2);
+            perspective: 1000px; /* Memberikan efek 3D saat berputar */
+        }
+
+        /* --- BAGIAN YANG DIUBAH: Rotasi Vertikal Saat Disentuh --- */
+        .logo-sitepak { 
+            width: 100%; 
+            height: 100%; 
+            object-fit: cover; 
+            border-radius: 50%; 
+            transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+        }
+
+        .icon-circle:active .logo-sitepak, 
+        .icon-circle:hover .logo-sitepak {
+            transform: rotateY(360deg); /* Berputar secara vertikal */
+        }
+        /* --------------------------------------------------------- */
+
+        .title-large { font-size: 2.2rem; font-weight: 700; color: var(--kpu-cream); line-height: 1.2; }
+        .subtitle { font-size: 1rem; font-style: italic; margin-bottom: 40px; opacity: 0.9; }
+
+        .btn-primary {
+            display: inline-flex; align-items: center; gap: 12px; background: var(--gold-metallic);
+            color: var(--kpu-maroon-dark); font-size: 1.05rem; font-weight: 700; padding: 16px 45px; 
+            border-radius: 40px; cursor: pointer; border: none; text-transform: uppercase; 
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4); text-decoration: none;
+            margin-bottom: 25px;
+            transition: transform 0.2s;
+        }
+        .btn-primary:active { transform: scale(0.95); }
+
+        .extra-nav { display: flex; gap: 30px; justify-content: center; margin-top: 10px; }
+        .nav-link { color: var(--white); text-decoration: none; font-size: 0.95rem; display: flex; align-items: center; gap: 8px; opacity: 0.9; }
+
+        /* Form Section Stabilizer */
+        .form-section { 
+            width: 100%; max-width: 900px; display: none; flex-direction: column;
+            animation: fadeIn 0.5s ease-out; margin-top: 10px;
+        }
+
+        /* Mencegah pergeseran saat gambar muncul */
+        .upload-section {
+            background: rgba(255, 255, 255, 0.1); padding: 20px; border-radius: 15px;
+            margin-bottom: 15px; border: 1px dashed var(--kpu-gold);
+            display: flex; flex-direction: column; align-items: center; gap: 10px;
+            min-height: 150px; /* Menjaga tinggi foto saat muncul */
+        }
+        
+        .preview-photo {
+            width: 100px; height: 100px; border-radius: 10px; border: 2px solid var(--kpu-gold);
+            object-fit: cover; display: none;
+        }
+
+        .upload-btn-wrapper { position: relative; overflow: hidden; display: inline-block; }
+        .btn-upload {
+            border: 1px solid var(--kpu-gold); color: var(--kpu-gold);
+            background-color: transparent; padding: 10px 30px;
+            border-radius: 25px; font-size: 0.9rem; font-weight: 600; cursor: pointer;
+        }
+        .upload-btn-wrapper input[type=file] { font-size: 100px; position: absolute; left: 0; top: 0; opacity: 0; cursor: pointer; }
+
+        .form-container { 
+            background: white; border-radius: 15px; 
+            height: 600px; /* Tinggi dikunci agar halaman stabil saat iframe loading */
+            overflow: hidden; display: flex; flex-direction: column;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        }
+
+        iframe { width: 100%; height: 100%; border: none; }
+
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(8px);
+            display: none; justify-content: center; align-items: center; z-index: 2000;
+        }
+        .modal-content {
+            background: var(--white); color: #333; padding: 30px; border-radius: 30px; 
+            max-width: 400px; width: 90%; text-align: center; border: 4px solid var(--kpu-gold);
+        }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <img src="logo%20kpu.png" alt="Logo KPU">
+        <h2>KPU<br><span>PROVINSI RIAU</span></h2>
+    </div>
+
+    <div id="thankYouModal" class="modal-overlay">
+        <div class="modal-content">
+            <div id="modalContent"></div>
+            <div id="modalBtnContainer"></div>
+        </div>
+    </div>
+
+    <button id="btnBack" class="btn-back" onclick="navigasiBack()"><i class="fas fa-arrow-left"></i></button>
+
+    <div class="container">
+        <!-- Home -->
+        <div id="bagian-home" class="main-content">
+            <div class="icon-circle"><img src="Logo.png" alt="Logo Si-Tepak Riau" class="logo-sitepak"></div>
+            <p style="font-size: 1rem; font-weight: 300;">Selamat Datang di</p>
+            <h2 class="title-large">Komisi Pemilihan Umum<br>Provinsi Riau</h2>
+            <p class="subtitle" style="margin-top: 15px;">"Demi ketertiban administrasi, Silakan melakukan pengisian buku tamu digital."</p>
+
+            <button class="btn-primary" onclick="bukaHalaman('bagian-registrasi')">
+                <i class="fas fa-user-check"></i> Registrasi Kehadiran
+            </button>
+
+            <div class="extra-nav">
+                <a href="https://riau.kpu.go.id" target="_blank" class="nav-link"><i class="fas fa-globe"></i> Website Resmi</a>
+                <a href="javascript:void(0)" onclick="bukaHalaman('bagian-survei')" class="nav-link"><i class="fas fa-award"></i> Survei Pelayanan</a>
+            </div>
+        </div>
+
+        <!-- Registrasi -->
+        <div id="bagian-registrasi" class="form-section">
+            <h2 style="margin-bottom:15px; color: var(--kpu-gold);">FORM REGISTRASI TAMU</h2>
+            <div class="upload-section">
+                <img id="previewFoto" class="preview-photo" src="#" alt="Preview">
+                <div style="text-align: center;">
+                    <p style="font-size: 0.9rem; margin-bottom: 10px;">Ambil Selfie / Unggah Identitas</p>
+                    <div class="upload-btn-wrapper">
+                        <button class="btn-upload" id="tombolUploadUI"><i class="fas fa-camera"></i> Pilih Foto</button>
+                        <input type="file" id="inputFoto" accept="image/*" capture="user" onchange="previewFile(this)">
+                    </div>
+                </div>
+                <div id="statusInfo" style="font-size: 0.75rem; font-weight: bold;"></div>
+            </div>
+            <div class="form-container">
+                <iframe id="iframeReg" src="https://docs.google.com/forms/d/e/1FAIpQLSdI2ah1eJdnfWtoDha_IGm9fg_waAyTs6tP6b4AyzAGGLgBvQ/viewform?embedded=true" onload="cekSubmitReg()">Memuat...</iframe>
+            </div>
+        </div>
+
+        <!-- Survei -->
+        <div id="bagian-survei" class="form-section">
+            <h2 style="margin-bottom:15px; color: var(--kpu-gold);">SURVEI KEPUASAN PELAYANAN</h2>
+            <div class="form-container">
+                <iframe id="iframeSurv" src="https://docs.google.com/forms/d/e/1FAIpQLSdSqjfIa6pIwscKsIsoNoHQL_cmsZKt1getDeTIvW07ClWngw/viewform?embedded=true" onload="cekSubmitSurv()">Memuat...</iframe>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer" id="mainFooter">
+        <p style="color: rgba(253, 249, 241, 0.5); font-size: 0.6rem; margin-bottom: 0.5px;">Sistem Informasi Tamu Elektronik Pelayanan KPU Riau</p>
+        © 2026 Komisi Pemilihan Umum Provinsi Riau
+    </div>
+
+    <script>
+        let statusReg = "diam", statusSurv = "diam", siapDeteksi = false;
+        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxrFnPEUO6qefpTNJ5NEnXRzdHRC3qcgEHpOBgLeZLuZK_ItZsur6Z-3PIL41gS9JDf/exec';
+
+        function previewFile(input) {
+            const preview = document.getElementById('previewFoto');
+            const status = document.getElementById('statusInfo');
+            const file = input.files[0];
+            const reader = new FileReader();
+            
+            reader.onload = function (e) {
+                preview.src = e.target.result;
+                preview.style.display = 'block';
+                status.innerText = "Mengunggah...";
+                uploadKeDrive(e.target.result, file.name);
+            };
+            if (file) reader.readAsDataURL(file);
+        }
+
+        function uploadKeDrive(base64Data, namaFile) {
+            const status = document.getElementById('statusInfo');
+            const base64Murni = base64Data.split(',')[1];
+            const mimeType = base64Data.match(/data:([a-zA-Z0-9]+\/[a-zA-Z0-9-.+]+).*,.*/)[1];
+
+            // Membuat format Tanggal & Waktu Real-time
+            const sekarang = new Date();
+            const tanggal = String(sekarang.getDate()).padStart(2, '0');
+            const bulan = String(sekarang.getMonth() + 1).padStart(2, '0');
+            const tahun = sekarang.getFullYear();
+            const jam = String(sekarang.getHours()).padStart(2, '0');
+            const menit = String(sekarang.getMinutes()).padStart(2, '0');
+            const detik = String(sekarang.getSeconds()).padStart(2, '0');
+
+            // Menggabungkan nama file rapi: Tamu_DD-MM-YYYY_HH-MM-SS
+            const namaFileWaktu = `Tamu_${tanggal}-${bulan}-${tahun}_${jam}-${menit}-${detik}`;
+
+            fetch(GOOGLE_SCRIPT_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                body: JSON.stringify({ nama: namaFileWaktu, tipe: mimeType, data: base64Murni })
+            }).then(() => {
+                status.innerText = "✅ Tersimpan";
+            }).catch(() => { status.innerText = "❌ Gagal"; });
+        }
+
+        function bukaHalaman(id) {
+            window.scrollTo(0, 0); // Scroll ke atas dulu agar stabil
+            document.getElementById('bagian-home').style.display = 'none';
+            document.getElementById('bagian-registrasi').style.display = 'none';
+            document.getElementById('bagian-survei').style.display = 'none';
+            document.getElementById(id).style.display = 'flex';
+            document.getElementById('btnBack').style.display = (id==='bagian-home'?'none':'flex');
+            
+            if(id==='bagian-registrasi'){ statusReg="siap"; siapDeteksi=false; setTimeout(()=>siapDeteksi=true, 5000); }
+            if(id==='bagian-survei') statusSurv="siap";
+        }
+
+        function navigasiBack() { 
+            document.getElementById('thankYouModal').style.display='none'; 
+            bukaHalaman('bagian-home'); 
+        }
+
+        function tampilkanPesan(tipe) {
+            const modal = document.getElementById('thankYouModal');
+            const content = document.getElementById('modalContent');
+            const btnContainer = document.getElementById('modalBtnContainer');
+            
+            if (tipe === 'reg') {
+                content.innerHTML = '<h2 style="color:var(--kpu-maroon)">Berhasil Terdaftar</h2><p style="margin:15px 0">Data dan foto Anda telah kami terima.</p>';
+                btnContainer.innerHTML = '<button class="btn-primary" onclick="tutupModalOnly(); bukaHalaman(\'bagian-survei\')">Isi Survei Pelayanan</button>';
+            } else {
+                content.innerHTML = '<h2 style="color:var(--kpu-maroon)">Terima Kasih</h2><p style="margin:15px 0">Partisipasi Anda sangat berarti.</p>';
+                btnContainer.innerHTML = '<button class="btn-primary" onclick="navigasiBack()">Selesai</button>';
+            }
+            modal.style.display = 'flex';
+        }
+
+        function tutupModalOnly() { document.getElementById('thankYouModal').style.display = 'none'; }
+        function cekSubmitReg() { if (statusReg === "siap" && siapDeteksi) { statusReg="selesai"; tampilkanPesan("reg"); } }
+        function cekSubmitSurv() { if (statusSurv === "siap") { statusSurv="selesai"; tampilkanPesan("surv"); } }
+    </script>
+</body>
+</html>
